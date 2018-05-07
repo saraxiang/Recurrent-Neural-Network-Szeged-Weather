@@ -12,7 +12,7 @@ import urllib2
 from BeautifulSoup import BeautifulSoup
 from datetime import datetime
 
-DATA_DIR = "saraData"
+DATA_DIR = "weatherData"
 RANDOM_SLEEP_TIMES = (1, 5)
 
 # This repo "github.com/datasets/s-and-p-500-companies" has some other information about

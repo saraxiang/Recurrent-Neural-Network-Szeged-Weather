@@ -39,7 +39,9 @@ class StockDataSet(object):
             self.stock_sym, len(self.train_X), len(self.test_y))
 
     def _prepare_data(self, seq):
-        # split into items of input_size
+        # split into items of input_size 
+        # we end up with t sliding windows, each of size self.input_size
+        # where t = len(seq) // self.input_size
         seq = [np.array(seq[i * self.input_size: (i + 1) * self.input_size])
                for i in range(len(seq) // self.input_size)]
 
@@ -48,6 +50,10 @@ class StockDataSet(object):
                 curr / seq[i][-1] - 1.0 for i, curr in enumerate(seq[1:])]
 
         # split into groups of num_steps
+        # In the below example, X is the set of inputs, and y is the set of corresponding labels
+        # Input1=[[p0,p1,p2],[p3,p4,p5]],Label1=[p6,p7,p8]
+        # Input2=[[p3,p4,p5],[p6,p7,p8]],Label2=[p9,p10,p11]
+        # Input3=[[p6,p7,p8],[p9,p10,p11]],Label3=[p12,p13,p14]
         X = np.array([seq[i: i + self.num_steps] for i in range(len(seq) - self.num_steps)])
         y = np.array([seq[i + self.num_steps] for i in range(len(seq) - self.num_steps)])
 

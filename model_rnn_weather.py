@@ -63,7 +63,9 @@ class LstmRNN(object):
         self.learning_rate = tf.placeholder(tf.float32, None, name="learning_rate")
         self.keep_prob = tf.placeholder(tf.float32, None, name="keep_prob")
 
-        # weather mapped to integers.
+        # NOTE: this is necessary ?
+        # Stock symbols are mapped to integers.
+        self.symbols = tf.placeholder(tf.int32, [None, 1], name='stock_labels')
 
         self.inputs = tf.placeholder(tf.float32, [None, self.num_steps, self.input_size], name="inputs")
         self.targets = tf.placeholder(tf.float32, [None, self.input_size], name="targets")
@@ -140,6 +142,8 @@ class LstmRNN(object):
         self.writer.add_graph(self.sess.graph)
 
         if self.use_embed:
+            # NOTE: remove / deal with this
+            print "using embed - this shouldn't happen!"
             # Set up embedding visualization
             # Format: tensorflow/tensorboard/plugins/projector/projector_config.proto
             projector_config = projector.ProjectorConfig()
@@ -181,6 +185,7 @@ class LstmRNN(object):
             self.keep_prob: 1.0,
             self.inputs: merged_test_X,
             self.targets: merged_test_y,
+            self.symbols: merged_test_labels,
         }
 
         global_step = 0
@@ -189,13 +194,19 @@ class LstmRNN(object):
         random.seed(time.time())
 
         # Select samples for plotting.
+        print "config.sample_size"
+        print config.sample_size
+        print "len(dataset_list)"
+        print len(dataset_list)
         sample_labels = range(min(config.sample_size, len(dataset_list)))
+        print "sample_labels:"
+        print sample_labels
         sample_indices = {}
         for l in sample_labels:
             target_indices = np.array([
                 i for i, sym_label in enumerate(merged_test_labels)
                 if sym_label[0] == l])
-            sample_indices[sym] = target_indices
+            sample_indices["weatherHistory"] = target_indices
         print sample_indices
 
         print "Start training for weather:"

@@ -12,7 +12,7 @@ import urllib2
 from BeautifulSoup import BeautifulSoup
 from datetime import datetime
 
-DATA_DIR = "data"
+DATA_DIR = "testData"
 RANDOM_SLEEP_TIMES = (1, 5)
 
 # This repo "github.com/datasets/s-and-p-500-companies" has some other information about
@@ -25,13 +25,14 @@ def _download_sp500_list():
     if os.path.exists(SP500_LIST_PATH):
         return
 
+    # this only happens if local csv is not found; downloads archived
     f = urllib2.urlopen(SP500_LIST_URL)
     print "Downloading ...", SP500_LIST_URL
     with open(SP500_LIST_PATH, 'w') as fin:
         print >> fin, f.read()
     return
 
-
+# note that we're essentially only looking at 1 "symbol" (in our case, weather in 1 area)
 def _load_symbols():
     _download_sp500_list()
     df_sp500 = pd.read_csv(SP500_LIST_PATH)
@@ -40,7 +41,7 @@ def _load_symbols():
     print "Loaded %d stock symbols" % len(stock_symbols)
     return stock_symbols
 
-
+# note that we only need to call the equivalent of this once, for our 1 "symbol"
 def fetch_prices(symbol, out_name):
     """
     Fetch daily stock prices for stock `symbol`, since 1980-01-01.

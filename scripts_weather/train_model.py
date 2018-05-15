@@ -12,7 +12,7 @@ from config import DEFAULT_CONFIG, MODEL_DIR
 from data_model import WeatherDataSet
 
 
-def load_data(stock_name, input_size, num_steps):
+def load_data(input_size, num_steps):
     stock_dataset = WeatherDataSet(input_size=input_size, num_steps=num_steps,
                                  test_ratio=0.1, apparent_temperature=False)
     print "Train data size:", len(stock_dataset.train_X)
@@ -30,20 +30,17 @@ def _compute_learning_rates(config=DEFAULT_CONFIG):
     return learning_rates_to_use
 
 
-def train_lstm_graph(stock_name, lstm_graph, config=DEFAULT_CONFIG):
+def train_lstm_graph(lstm_graph, config=DEFAULT_CONFIG):
     """
-    stock_name (str)
     lstm_graph (tf.Graph)
     """
-    stock_dataset = load_data(stock_name,
-                              input_size=config.input_size,
+    stock_dataset = load_data(input_size=config.input_size,
                               num_steps=config.num_steps)
 
     final_prediction = []
     final_loss = None
 
-    graph_name = "%s_lr%.2f_lr_decay%.3f_lstm%d_step%d_input%d_batch%d_epoch%d" % (
-        stock_name,
+    graph_name = "lr%.2f_lr_decay%.3f_lstm%d_step%d_input%d_batch%d_epoch%d" % (
         config.init_learning_rate, config.learning_rate_decay,
         config.lstm_size, config.num_steps,
         config.input_size, config.batch_size, config.max_epoch)
@@ -114,7 +111,7 @@ def train_lstm_graph(stock_name, lstm_graph, config=DEFAULT_CONFIG):
 
 def main(config=DEFAULT_CONFIG):
     lstm_graph = build_lstm_graph_with_config(config=config)
-    train_lstm_graph('SP500', lstm_graph, config=config)
+    train_lstm_graph(lstm_graph, config=config)
 
 
 if __name__ == '__main__':

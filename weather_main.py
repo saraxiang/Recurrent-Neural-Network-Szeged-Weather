@@ -5,8 +5,8 @@ import pprint
 import tensorflow as tf
 import tensorflow.contrib.slim as slim
 
-from data_model import StockDataSet
-from model_rnn import LstmRNN
+from weather_data_model import StockDataSet
+from weather_model_rnn import LstmRNN
 
 flags = tf.app.flags
 flags.DEFINE_integer("stock_count", 100, "Stock count [100]")
@@ -48,7 +48,6 @@ def main(_):
     with tf.Session(config=run_config) as sess:
         rnn_model = LstmRNN(
             sess,
-            FLAGS.stock_count,
             lstm_size=FLAGS.lstm_size,
             num_layers=FLAGS.num_layers,
             num_steps=FLAGS.num_steps,

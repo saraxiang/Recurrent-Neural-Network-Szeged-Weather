@@ -15,7 +15,7 @@ from tensorflow.contrib.tensorboard.plugins import projector
 
 
 class LstmRNN(object):
-    def __init__(self, sess, stock_count,
+    def __init__(self, sess, 
                  lstm_size=128,
                  num_layers=1,
                  num_steps=30,
@@ -28,17 +28,14 @@ class LstmRNN(object):
 
         Args:
             sess:
-            stock_count (int): num. of stocks we are going to train with.
             lstm_size (int)
             num_layers (int): num. of LSTM cell layers.
             num_steps (int)
             input_size (int)
             keep_prob (int): (1.0 - dropout rate.) for a LSTM cell.
-            embed_size (int): length of embedding vector, only used when stock_count > 1.
             checkpoint_dir (str)
         """
         self.sess = sess
-        self.stock_count = stock_count
 
         self.lstm_size = lstm_size
         self.num_layers = num_layers
@@ -187,14 +184,14 @@ class LstmRNN(object):
         sample_labels = range(min(config.sample_size, len(dataset_list)))
         sample_indices = {}
         for l in sample_labels:
-            sym = dataset_list[l].stock_sym
+            sym = dataset_list[l].file_name
             target_indices = np.array([
                 i for i, sym_label in enumerate(merged_test_labels)
                 if sym_label[0] == l])
             sample_indices[sym] = target_indices
         print sample_indices
 
-        print "Start training data in file:", [d.stock_sym for d in dataset_list]
+        print "Start training data in file:", [d.file_name for d in dataset_list]
         for epoch in xrange(config.max_epoch):
             epoch_step = 0
             learning_rate = config.init_learning_rate * (

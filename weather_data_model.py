@@ -9,13 +9,13 @@ random.seed(time.time())
 
 class StockDataSet(object):
     def __init__(self,
-                 stock_sym,
+                 file_name,
                  input_size=1,
                  num_steps=30,
                  test_ratio=0.1,
                  normalized=False,
                  close_price_only=True):
-        self.stock_sym = stock_sym
+        self.file_name = file_name
         self.input_size = input_size
         self.num_steps = num_steps
         self.test_ratio = test_ratio
@@ -23,7 +23,7 @@ class StockDataSet(object):
         self.normalized = normalized
 
         # Read csv file
-        raw_df = pd.read_csv(os.path.join("data", "%s.csv" % stock_sym))
+        raw_df = pd.read_csv(os.path.join("data", "%s.csv" % file_name))
 
         # Merge into one sequence
         if close_price_only:
@@ -35,8 +35,8 @@ class StockDataSet(object):
         self.train_X, self.train_y, self.test_X, self.test_y = self._prepare_data(self.raw_seq)
 
     def info(self):
-        return "StockDataSet [%s] train: %d test: %d" % (
-            self.stock_sym, len(self.train_X), len(self.test_y))
+        return "WeatherDataSet [%s] train: %d test: %d" % (
+            self.file_name, len(self.train_X), len(self.test_y))
 
     def _prepare_data(self, seq):
         # split into items of input_size 

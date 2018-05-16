@@ -208,7 +208,7 @@ class LstmRNN(object):
             sample_indices[sym] = target_indices
         print sample_indices
 
-        print "Start training for stocks:", [d.stock_sym for d in dataset_list]
+        print "Start training data in file:", [d.stock_sym for d in dataset_list]
         for epoch in xrange(config.max_epoch):
             epoch_step = 0
             learning_rate = config.init_learning_rate * (

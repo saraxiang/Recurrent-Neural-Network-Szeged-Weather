@@ -38,41 +38,6 @@ def show_all_variables():
     slim.model_analyzer.analyze_vars(model_vars, print_info=True)
 
 
-def load_sp500(input_size, num_steps, k=None, target_symbol=None, test_ratio=0.05):
-    if target_symbol is not None:
-        return [
-            StockDataSet(
-                target_symbol,
-                input_size=input_size,
-                num_steps=num_steps,
-                test_ratio=test_ratio)
-        ]
-
-    # Load metadata of s & p 500 stocks
-    info = pd.read_csv("data/constituents-financials.csv")
-    info = info.rename(columns={col: col.lower().replace(' ', '_') for col in info.columns})
-    info['file_exists'] = info['symbol'].map(lambda x: os.path.exists("data/{}.csv".format(x)))
-    print info['file_exists'].value_counts().to_dict()
-
-    info = info[info['file_exists'] == True].reset_index(drop=True)
-    info = info.sort('market_cap', ascending=False).reset_index(drop=True)
-
-    if k is not None:
-        info = info.head(k)
-
-    print "Head of S&P 500 info:\n", info.head()
-
-    # Generate embedding meta file
-    info[['symbol', 'sector']].to_csv(os.path.join("logs/metadata.tsv"), sep='\t', index=False)
-
-    return [
-        StockDataSet(row['symbol'],
-                     input_size=input_size,
-                     num_steps=num_steps,
-                     test_ratio=0.05)
-        for _, row in info.iterrows()]
-
-
 def main(_):
     pp.pprint(flags.FLAGS.__flags)
 
@@ -93,12 +58,13 @@ def main(_):
 
         show_all_variables()
 
-        stock_data_list = load_sp500(
-            FLAGS.input_size,
-            FLAGS.num_steps,
-            k=FLAGS.stock_count,
-            target_symbol=FLAGS.file_name,
-        )
+        stock_data_list = [
+            StockDataSet(
+                FLAGS.file_name,
+                input_size=FLAGS.input_size,
+                num_steps=FLAGS.num_steps,
+                test_ratio=.05)
+        ]
 
         if FLAGS.train:
             rnn_model.train(stock_data_list, FLAGS)

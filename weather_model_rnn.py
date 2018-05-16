@@ -82,23 +82,9 @@ class LstmRNN(object):
             state_is_tuple=True
         ) if self.num_layers > 1 else _create_one_cell()
 
-        if self.embed_size > 0 and self.stock_count > 1:
-            self.embed_matrix = tf.Variable(
-                tf.random_uniform([self.stock_count, self.embed_size], -1.0, 1.0),
-                name="embed_matrix"
-            )
-            
-            # stock_label_embeds.shape = (batch_size, embedding_size)
-            stacked_symbols = tf.tile(self.symbols, [1, self.num_steps], name='stacked_stock_labels')
-            stacked_embeds = tf.nn.embedding_lookup(self.embed_matrix, stacked_symbols)
-
-            # After concat, inputs.shape = (batch_size, num_steps, input_size + embed_size)
-            self.inputs_with_embed = tf.concat([self.inputs, stacked_embeds], axis=2, name="inputs_with_embed")
-            self.embed_matrix_summ = tf.summary.histogram("embed_matrix", self.embed_matrix)
-
-        else:
-            self.inputs_with_embed = tf.identity(self.inputs)
-            self.embed_matrix_summ = None
+        
+        self.inputs_with_embed = tf.identity(self.inputs)
+        self.embed_matrix_summ = None
 
         print "inputs.shape:", self.inputs.shape
         print "inputs_with_embed.shape:", self.inputs_with_embed.shape

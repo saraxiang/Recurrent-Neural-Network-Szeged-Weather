@@ -13,7 +13,7 @@ class StockDataSet(object):
                  input_size=1,
                  num_steps=30,
                  test_ratio=0.1,
-                 normalized=True,
+                 normalized=False,
                  close_price_only=True):
         self.stock_sym = stock_sym
         self.input_size = input_size
